@@ -202,7 +202,8 @@ char* binary_to_hex(FILE* in)
 
 	while(fscanf(in, "%c", &c) != EOF)
 	{
-		chars[num_length++] = c;
+		chars[num_length] = c;
+		num_length++;
 	}
 
 	for(int i = 0; i < num_length; i += 4)
@@ -211,7 +212,7 @@ char* binary_to_hex(FILE* in)
 
 		for(int j = 0; j < 4; ++j)
 		{
-			temp |= ((chars[(i / 4) + j] == 0x30 ? 0 : 1) << j);
+			temp |= (((chars[(i / 4) + j] == 0x30) ? 0 : 1) << j);
 		}
 
 		result[i / 4] = hex_numbers[temp];
