@@ -173,7 +173,7 @@ void freq_of_symbols(FILE* out, FILE* in)
 
 	while(fscanf(in, "%c", &c) != EOF)
 	{
-		freqs[c]++;
+		freqs[(Uint8)c]++;
 	}
 
 	for(int i = 0; i < 255; ++i)
