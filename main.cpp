@@ -2,7 +2,6 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <process.h>
 #include <string.h>
 #include <QList>
 
@@ -160,11 +159,11 @@ public:
 	}
 };
 
-void freq_of_symbols(FILE* out, FILE* in)
+void freq_of_symbols(FILE* out, FILE* in) //1st task
 {
 	int freqs[256];
 
-	for(int i = 0; i < 255; ++i)
+	for(int i = 0; i < 256; ++i)
 	{
 		freqs[i] = 0;
 	}
@@ -176,23 +175,24 @@ void freq_of_symbols(FILE* out, FILE* in)
 		freqs[(Uint8)c]++;
 	}
 
-	for(int i = 0; i < 255; ++i)
+	for(int i = 0; i < 256; ++i)
 	{
 		fprintf(out, "%c\t%d\n", (char)i, freqs[i]);
 	}
 }
 
-void to_binary(int in, FILE* out)
+void to_binary(int in, FILE* out) //2nd task
 {
 	for(int i = 31; i >= 0; --i)
 	{
-		fprintf(out, "%c", ((1 << i) & in) ? '1' : '0');
+		//fprintf(out, "%c", ((1 << i) & in) ? '1' : '0');
+		printf("%c", ((1 << i) & in) ? '1' : '0');
 	}
 }
 
 const char hex_numbers[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-char* binary_to_hex(FILE* in)
+char* binary_to_hex(FILE* in) //3rd task
 {
 	char c = 0;
 	int num_length = 0;
@@ -221,7 +221,7 @@ char* binary_to_hex(FILE* in)
 	return result;
 }
 
-void write_pine_tree(int num_of_rows)
+void write_pine_tree(int num_of_rows) //4th task
 {
 	for(int i = 0; i < num_of_rows; ++i)
 	{
@@ -239,7 +239,7 @@ void write_pine_tree(int num_of_rows)
 	}
 }
 
-int* matrix_rows_average(int** matrix, int cols, int rows)
+int* matrix_rows_average(int** matrix, int cols, int rows) //
 {
 	static int* av_list = (int*)malloc(sizeof(int) * rows);
 
@@ -309,9 +309,18 @@ void linked_list_paste_element(Node* HEAD, Node* el, const int index)
 	cur_node->next = el;
 }
 
+int matrix[4][4] = {
+	{2, 3, 44, 6},
+	{4, 4, 0, -55},
+	{-8, 5, 4, 1},
+	{0, 1, 2, 3},
+};
+
 int main()
 {
 	cout << "test\n\n";
 
 	write_pine_tree(40);
+
+	to_binary(0xffeeddcc, nullptr);
 }
