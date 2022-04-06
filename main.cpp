@@ -14,6 +14,8 @@ typedef int16_t Sint16;
 typedef uint8_t Uint8;
 typedef int8_t Sint8;
 
+//ВООТ ОН ПРОЕКТ В КУУУТЕЕЕ КОМПИЛИТСЯЯ! А БЕЗ ЧЁТКОГО ТЗ РЕЗУЛЬТАТ -- ХЕРАК ХЕРАК И В ПРОДАКШН!!!!
+
 using namespace std;
 
 struct mark_data
@@ -239,23 +241,25 @@ void write_pine_tree(int num_of_rows) //4th task
 	}
 }
 
-int* matrix_rows_average(int** matrix, int cols, int rows) //
+QList<double> matrix_rows_average(int** matrix, int cols, int rows) //
 {
-	static int* av_list = (int*)malloc(sizeof(int) * rows);
+	//static int* av_list = (int*)malloc(sizeof(int) * rows);
+	QList<double> aver;
 
 	for(int i = 0; i < rows; ++i)
 	{
-		int av = 0;
+		double av = 0.0;
 
 		for(int j = 0; j < cols; ++j)
 		{
 			av += matrix[i][j];
 		}
 
-		av_list[i] = av / cols;
+		//av_list[i] = av / cols;
+		aver.append(av / cols);
 	}
 
-	return av_list;
+	return aver;
 }
 
 struct Node
@@ -309,11 +313,11 @@ void linked_list_paste_element(Node* HEAD, Node* el, const int index)
 	cur_node->next = el;
 }
 
-int matrix[4][4] = {
-	{2, 3, 44, 6},
-	{4, 4, 0, -55},
-	{-8, 5, 4, 1},
-	{0, 1, 2, 3},
+int matrix[16] = {
+	2, 3, 44, 6,
+	4, 4, 0, -55,
+	-8, 5, 4, 1,
+	0, 1, 2, 3,
 };
 
 int main()
@@ -322,5 +326,39 @@ int main()
 
 	write_pine_tree(40);
 
+	cout << "\n\n";
+
 	to_binary(0xffeeddcc, nullptr);
+
+	cout << "\n\n";
+
+	int** mat = (int**)malloc(sizeof(int*) * 4);
+
+	for(int i = 0; i < 4; ++i)
+	{
+		mat[i] = (int*)malloc(4 * sizeof(int));
+	}
+
+	for(int i = 0; i < 16; ++i)
+	{
+		mat[i / 4][i & 3] = matrix[i];
+	}
+
+	QList<double> avers = matrix_rows_average(mat, 4, 4);
+
+	for(int i = 0; i < 4; ++i)
+	{
+		cout << avers[i] << "\t";
+	}
+
+	cout << "\n\n";
+
+	for(int i = 0; i < 4; ++i)
+	{
+		free(mat[i]);
+	}
+
+	free(mat);
+
+
 }
