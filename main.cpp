@@ -56,84 +56,74 @@ public:
 	{
 		mark_data_node* cur_node = HEAD;
 
-		if(strcmp(subject_name, HEAD->data.subject_name) == 0 && HEAD != nullptr)
+		while(strcmp(subject_name, cur_node->data.subject_name) != 0 && cur_node != nullptr)
 		{
-			HEAD->data.marks.push_back(mark);
-			return;
+			cur_node = cur_node->next;
 		}
 
-		else
+		//now we are at the node we need
+
+		if(cur_node != nullptr)
 		{
-			while(strcmp(subject_name, cur_node->data.subject_name) != 0 && cur_node != nullptr)
-			{
-				cur_node = cur_node->next;
-			}
-
-			//now we are at the node we need
-
-			if(cur_node != nullptr)
-			{
-				cur_node->data.marks.push_back(mark);
-			}
+			cur_node->data.marks.push_back(mark);
 		}
 	}
 
 	void add_subject(char* subject_name)
 	{
-		mark_data_node* temp = (mark_data_node*)malloc(sizeof(mark_data_node));
+		mark_data_node* temp = new mark_data_node();
 
 		if(HEAD == nullptr)
 		{
-			HEAD = TAIL = temp;
-			HEAD->data.subject_name = (char*)malloc(sizeof(char) * (strlen(subject_name) + 1));
+			HEAD = temp;
+			TAIL = temp;
+
+			HEAD->data.subject_name = (char*)malloc(sizeof(char) * (strlen(subject_name)));
+			HEAD->next = nullptr;
+			HEAD->prev = nullptr;
 			strcpy(HEAD->data.subject_name, subject_name);
 			return;
 		}
 
 		temp->next = nullptr;
 		temp->prev = TAIL;
+		temp->prev->next = temp;
 		TAIL = temp;
 
-		temp->data.subject_name = (char*)malloc(sizeof(char) * (strlen(subject_name) + 1));
+		temp->data.subject_name = (char*)malloc(sizeof(char) * (strlen(subject_name)));
 		strcpy(temp->data.subject_name, subject_name);
 	}
 
-	void calculate_av_mark(char* subject_name)
+	double calculate_av_mark()
 	{
 		mark_data_node* cur_node = HEAD;
 
-		if(strcmp(subject_name, HEAD->data.subject_name) == 0)
-		{
-			int temp = 0;
+		int subj_num = 0;
 
-			for(int i = 0; i < cur_node->data.marks.size(); ++i)
+		double sum = 0;
+
+		while(cur_node != nullptr)
+		{
+			double temp = 0;
+
+			if(cur_node->data.marks.size() > 0)
 			{
-				temp += cur_node->data.marks[i];
+				for(int i = 0; i < cur_node->data.marks.size(); ++i)
+				{
+					temp += cur_node->data.marks[i];
+				}
+
+				temp /= (double)cur_node->data.marks.size();
 			}
 
-			cout << (double)temp / (double)cur_node->data.marks.size();
+			sum += temp;
 
-			return;
+			cur_node = cur_node->next;
+			subj_num++;
 		}
 
-		else
-		{
-			while(strcmp(subject_name, cur_node->data.subject_name) != 0)
-			{
-				cur_node = cur_node->next;
-			}
-
-			//now we are at the node we need
-
-			int temp = 0;
-
-			for(int i = 0; i < cur_node->data.marks.size(); ++i)
-			{
-				temp += cur_node->data.marks[i];
-			}
-
-			cout << (double)temp / (double)cur_node->data.marks.size();
-		}
+		sum /= (double)subj_num;
+		return sum;
 	}
 
 	void print_student_data()
@@ -144,22 +134,23 @@ public:
 
 		while(cur_node != nullptr)
 		{
-			for(int i = 0; i < strlen(cur_node->data.subject_name); ++i)
-			{
-				cout << cur_node->data.subject_name[i];
-			}
+			//cout << "sdfsdf";
+			cout << cur_node->data.subject_name;
 
 			cout <<  ", average mark: ";
 
 			double temp = 0;
 			double av_mark = 0;
 
-			for(int i = 0; i < cur_node->data.marks.size(); ++i)
+			if(cur_node->data.marks.size() > 0)
 			{
-				temp += cur_node->data.marks[i];
-			}
+				for(int i = 0; i < cur_node->data.marks.size(); ++i)
+				{
+					temp += cur_node->data.marks[i];
+				}
 
-			av_mark = (double)temp / ((double)cur_node->data.marks.size());
+				av_mark = (double)temp / ((double)cur_node->data.marks.size());
+			}
 
 			cout << av_mark << "\n";
 			cur_node = cur_node->next;
@@ -564,24 +555,22 @@ int main()
 
 	Student stud;
 	stud.add_subject("M(a/e)th");
-
-	cout << "added\n"; //я не понимаю, что тут происходит
 	stud.add_mark("M(a/e)th", 6);
-cout << "added\n";
 	stud.add_mark("M(a/e)th", 666);
-cout << "added\n";
+
+	stud.print_student_data();
+
+	stud.add_mark("M(a/e)th", 66);
+
 	stud.print_student_data();
 
 	stud.add_subject("Programming");
-cout << "added\n";
-	stud.add_mark("Programming", -6);
-cout << "added\n";
+
+	stud.add_mark("Programming", 6); //here
 	stud.add_mark("Programming", -666);
-	cout << "added\n";
 	stud.add_mark("M(a/e)th", 66);
-	cout << "added\n";
 
 	stud.print_student_data();
 
-	//короче, в жопу эти классы
+	cout << "\n\nav. mark: " << stud.calculate_av_mark();
 }
