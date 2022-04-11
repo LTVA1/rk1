@@ -16,13 +16,14 @@ typedef int8_t Sint8;
 
 //ВООТ ОН ПРОЕКТ В КУУУТЕЕЕ КОМПИЛИТСЯЯ! А БЕЗ ЧЁТКОГО ТЗ РЕЗУЛЬТАТ -- ХЕРАК ХЕРАК И В ПРОДАКШН!!!!
 
+//ПРОЕКТ ЧИТАЕТ ФАЙЛЫ ИЗ СВОЕЙ ПАПКИ. ЧТОБЫ ОН ЗАРАБОТАЛ, НЕОБХОДИМО QT УКАЗАТЬ, ЧТО ЭКЗЕШНИК НАДО СОВАТЬ В ПАПКУ ПРОЕКТА. ПОЧЕМУ-ТО В НАСТРОЙКАХ ЭТО НЕ СОХРАНЯЕТСЯ ПРИ ПЕРЕНОСЕ НА ДРУГОЙ КОМП. ЕСЛИ ЭТО СДЕЛАТЬ, ТО ВСЁ ЗАРАБОТАЕТ. НАДО ПОМЕНЯТЬ КАТАЛОГ СБОРКИ. РАБОЧУЮ ДИРЕКТОРИЮ ТОЖЕ НАДО ТКНУТЬ В ПАПКУ ПРОЕКТА.
+
 using namespace std;
 
 struct mark_data
 {
 	char* subject_name;
-	Uint32 subject_name_length;
-	vector<Uint8> marks;
+	vector<int> marks;
 };
 
 struct mark_data_node
@@ -32,7 +33,7 @@ struct mark_data_node
 	mark_data data;
 };
 
-class Student
+class Student //8th task
 {
 
 private:
@@ -42,7 +43,8 @@ private:
 public:
 	Student()
 	{
-
+		HEAD = nullptr;
+		TAIL = nullptr;
 	}
 
 	~Student()
@@ -50,11 +52,11 @@ public:
 
 	}
 
-	void add_mark(char* subject_name, Uint8 mark)
+	void add_mark(char* subject_name, int mark)
 	{
 		mark_data_node* cur_node = HEAD;
 
-		if(strcmp(subject_name, HEAD->data.subject_name) == 0)
+		if(strcmp(subject_name, HEAD->data.subject_name) == 0 && HEAD != nullptr)
 		{
 			HEAD->data.marks.push_back(mark);
 			return;
@@ -62,14 +64,17 @@ public:
 
 		else
 		{
-			while(strcmp(subject_name, cur_node->data.subject_name) != 0)
+			while(strcmp(subject_name, cur_node->data.subject_name) != 0 && cur_node != nullptr)
 			{
 				cur_node = cur_node->next;
 			}
 
 			//now we are at the node we need
 
-			cur_node->data.marks.push_back(mark);
+			if(cur_node != nullptr)
+			{
+				cur_node->data.marks.push_back(mark);
+			}
 		}
 	}
 
@@ -135,7 +140,9 @@ public:
 	{
 		mark_data_node* cur_node = HEAD;
 
-		do
+		cout << "\n\nData:\n\n";
+
+		while(cur_node != nullptr)
 		{
 			for(int i = 0; i < strlen(cur_node->data.subject_name); ++i)
 			{
@@ -144,20 +151,19 @@ public:
 
 			cout <<  ", average mark: ";
 
-			int temp = 0;
-			int av_mark = 0;
+			double temp = 0;
+			double av_mark = 0;
 
 			for(int i = 0; i < cur_node->data.marks.size(); ++i)
 			{
 				temp += cur_node->data.marks[i];
 			}
 
-			av_mark = (double)temp / (double)cur_node->data.marks.size();
+			av_mark = (double)temp / ((double)cur_node->data.marks.size());
 
 			cout << av_mark << "\n";
 			cur_node = cur_node->next;
 		}
-		while(cur_node->next != nullptr);
 	}
 };
 
@@ -187,7 +193,7 @@ void to_binary(int in, FILE* out) //2nd task
 {
 	for(int i = 31; i >= 0; --i)
 	{
-		//fprintf(out, "%c", ((1 << i) & in) ? '1' : '0');
+		fprintf(out, "%c", ((1 << i) & in) ? '1' : '0');
 		printf("%c", ((1 << i) & in) ? '1' : '0');
 	}
 }
@@ -200,6 +206,12 @@ char* binary_to_hex(FILE* in) //3rd task
 	int num_length = 0;
 
 	char chars[64];
+
+	for(int i = 0; i < 63; ++i)
+	{
+		chars[i] = 0;
+	}
+
 	static char result[16];
 
 	while(fscanf(in, "%c", &c) != EOF)
@@ -214,7 +226,7 @@ char* binary_to_hex(FILE* in) //3rd task
 
 		for(int j = 0; j < 4; ++j)
 		{
-			temp |= (((chars[(i / 4) + j] == 0x30) ? 0 : 1) << j);
+			temp |= (((chars[i + j] == 0x30) ? 0 : 1) << j);
 		}
 
 		result[i / 4] = hex_numbers[temp];
@@ -241,9 +253,9 @@ void write_pine_tree(int num_of_rows) //4th task
 	}
 }
 
-QList<double> matrix_rows_average(int** matrix, int cols, int rows) //
+QList<double> matrix_rows_average(int** matrix, int cols, int rows) //5th task
+//прототип QList<double>(*func)(int**, int, int)
 {
-	//static int* av_list = (int*)malloc(sizeof(int) * rows);
 	QList<double> aver;
 
 	for(int i = 0; i < rows; ++i)
@@ -255,7 +267,6 @@ QList<double> matrix_rows_average(int** matrix, int cols, int rows) //
 			av += matrix[i][j];
 		}
 
-		//av_list[i] = av / cols;
 		aver.append(av / cols);
 	}
 
@@ -270,8 +281,16 @@ struct Node
 	int size;
 };
 
-void linked_list_write_to_file(FILE* out, Node* TAIL)
+struct linklist
 {
+	Node* HEAD;
+	Node* TAIL;
+};
+
+void linked_list_write_to_file(FILE* out, Node* TAIL, Node* HEAD) //6th task
+{
+	fprintf(out, "%s\n", "From tail");
+
 	Node* cur_node = TAIL;
 
 	int num_of_elements = 0;
@@ -285,23 +304,38 @@ void linked_list_write_to_file(FILE* out, Node* TAIL)
 
 	cur_node = TAIL;
 
-	do
+	while(cur_node != nullptr)
 	{
-		fprintf(out, "%d\t%s\t%d\n", num_of_elements, cur_node->string, cur_node->size);
+		fprintf(out, "%d\t\"%s\"\t%d\n", num_of_elements, cur_node->string, cur_node->size);
 		num_of_elements--;
 		cur_node = cur_node->prev;
 	}
-	while(cur_node->prev != nullptr);
+
+	//===================================
+
+	fprintf(out, "\n%s\n", "From head");
+
+	cur_node = HEAD;
+
+	num_of_elements = 0;
+
+	while(cur_node != nullptr)
+	{
+		fprintf(out, "%d\t\"%s\"\t%d\n", num_of_elements, cur_node->string, cur_node->size);
+		num_of_elements++;
+		cur_node = cur_node->next;
+	}
 }
 
-void linked_list_paste_element(Node* HEAD, Node* el, const int index)
+void linked_list_paste_element(Node* HEAD, Node* el, const int index) //7th task
 {
 	Node* cur_node = HEAD;
 	int cur_index = 0;
 
-	while(cur_index <= index)
+	while(cur_index < index && cur_node != nullptr)
 	{
 		cur_node = cur_node->next;
+		cur_index++;
 	}
 
 	//now we are at the node AFTER which we want to past our new node
@@ -311,6 +345,8 @@ void linked_list_paste_element(Node* HEAD, Node* el, const int index)
 
 	cur_node->next->prev = el;
 	cur_node->next = el;
+
+	//cout << "Prev string " << el->prev->string << " Next string " << el->next->string;
 }
 
 int matrix[16] = {
@@ -322,13 +358,38 @@ int matrix[16] = {
 
 int main()
 {
-	cout << "test\n\n";
+	FILE* in;
+	FILE* out;
 
-	write_pine_tree(40);
+	in = fopen("1.txt", "r");
+	out = fopen("1_result.txt", "w");
+
+	freq_of_symbols(out, in);
+
+	fclose(in);
+	fclose(out);
+
+	out = fopen("2_result.txt", "w");
+
+	to_binary(0xffeeddcc, out);
+
+	fclose(out);
 
 	cout << "\n\n";
 
-	to_binary(0xffeeddcc, nullptr);
+	in = fopen("3.txt", "r");
+
+	char* nums = binary_to_hex(in);
+
+	nums[16] = '\0';
+
+	cout << nums;
+
+	fclose(in);
+
+	cout << "\n\n";
+
+	write_pine_tree(10);
 
 	cout << "\n\n";
 
@@ -360,5 +421,167 @@ int main()
 
 	free(mat);
 
+	//================================================
+	//Behold the linked list
 
+	linklist list;
+
+	list.HEAD = (Node*)malloc(sizeof(Node));
+	list.HEAD->string = (char*)malloc(6);
+
+	strcpy(list.HEAD->string, "HEAD");
+	list.HEAD->size = strlen(list.HEAD->string);
+
+	Node* cur_node = list.HEAD;
+
+	for(int i = 0; i < 10; ++i)
+	{
+		Node* new_node = (Node*)malloc(sizeof(Node));
+
+		cur_node->next = new_node;
+
+		new_node->next = nullptr;
+
+		new_node->prev = cur_node;
+
+		cur_node = new_node;
+
+		cur_node->string = (char*)malloc(10);
+		char buffer[30];
+		strcpy(cur_node->string, itoa(rand(), buffer, 10));
+		cur_node->size = strlen(cur_node->string);
+	}
+
+	list.TAIL = cur_node;
+	strcpy(cur_node->string, "TAIL");
+	cur_node->size = strlen(cur_node->string);
+
+	list.HEAD->prev = nullptr;
+	list.TAIL->next = nullptr;
+
+	out = fopen("6_result.txt", "w");
+
+	linked_list_write_to_file(out, list.TAIL, list.HEAD);
+
+	cur_node = list.HEAD; //delete the list
+
+	while(cur_node->next != nullptr)
+	{
+		cur_node = cur_node->next;
+
+		//cout << "Next: " << cur_node->next << " Prev: " << cur_node->prev << " String: " << cur_node->string << "\n";
+
+		free(cur_node->prev->string);
+		free(cur_node->prev);
+	}
+
+	fclose(out);
+
+	//================================================
+	//Behold another linked list
+
+	linklist list2;
+
+	list2.HEAD = (Node*)malloc(sizeof(Node));
+	list2.HEAD->string = (char*)malloc(6);
+
+	strcpy(list2.HEAD->string, "HEAD");
+	list2.HEAD->size = strlen(list2.HEAD->string);
+
+	cur_node = list2.HEAD;
+
+	for(int i = 0; i < 10; ++i)
+	{
+		Node* new_node = (Node*)malloc(sizeof(Node));
+
+		cur_node->next = new_node;
+
+		new_node->next = nullptr;
+
+		new_node->prev = cur_node;
+
+		cur_node = new_node;
+
+		cur_node->string = (char*)malloc(10);
+		char buffer[30];
+		strcpy(cur_node->string, itoa(rand(), buffer, 10));
+		cur_node->size = strlen(cur_node->string);
+	}
+
+	list2.TAIL = cur_node;
+	strcpy(cur_node->string, "TAIL");
+	cur_node->size = strlen(cur_node->string);
+
+	list2.HEAD->prev = nullptr;
+	list2.TAIL->next = nullptr;
+
+	cout << "\n\nLinked list before new element is pasted:\n\n";
+
+	cur_node = list2.HEAD;
+
+	while(cur_node != nullptr)
+	{
+		cout << "\"" << cur_node->string << "\" " << cur_node->size << "\n";
+		cur_node = cur_node->next;
+	}
+
+	Node* new_element = (Node*)malloc(sizeof(Node));
+
+	new_element->next = nullptr;
+	new_element->prev = nullptr;
+	new_element->string = (char*)malloc(strlen("I'm a new element somewhere in the linked list"));
+	strcpy(new_element->string, "I'm a new element somewhere in the linked list");
+
+	new_element->size = strlen("I'm a new element somewhere in the linked list");
+
+	linked_list_paste_element(list2.HEAD, new_element, 5);
+
+	cout << "\n\nLinked list after new element is pasted:\n\n";
+
+	cur_node = list2.HEAD;
+
+	while(cur_node != nullptr)
+	{
+		cout << "\"" << cur_node->string << "\" " << cur_node->size << "\n";
+		cur_node = cur_node->next;
+	}
+
+	cur_node = list2.HEAD; //delete the list
+
+	while(cur_node->next != nullptr)
+	{
+		cur_node = cur_node->next;
+
+		//cout << "Next: " << cur_node->next->string << " Prev: " << cur_node->prev->string << " String: " << cur_node->string << "\n";
+
+		free(cur_node->prev->string);
+		free(cur_node->prev);
+	}
+
+	//Классы нужны только в том случае, когда на разработку приложения пущены силы более одного человека и оона длится более одного года. Они сильно замедляют написание кода, усложняют его понимание, а производительность летит от значения, близкого к таковому у ассемблерного кода, к чертям вниз. Я видел замечательный проект с абстрактными классами, где было 10, КАРЛ, уровней наследования.
+
+	cout << "\n\n";
+
+	Student stud;
+	stud.add_subject("M(a/e)th");
+
+	cout << "added\n"; //я не понимаю, что тут происходит
+	stud.add_mark("M(a/e)th", 6);
+cout << "added\n";
+	stud.add_mark("M(a/e)th", 666);
+cout << "added\n";
+	stud.print_student_data();
+
+	stud.add_subject("Programming");
+cout << "added\n";
+	stud.add_mark("Programming", -6);
+cout << "added\n";
+	stud.add_mark("Programming", -666);
+	cout << "added\n";
+	stud.add_mark("M(a/e)th", 66);
+	cout << "added\n";
+
+	stud.print_student_data();
+
+	//короче, в жопу эти классы
 }
