@@ -196,6 +196,13 @@ void to_binary(int in, FILE* out) //2nd task
 		fprintf(out, "%c", ((1 << i) & in) ? '1' : '0');
 		printf("%c", ((1 << i) & in) ? '1' : '0');
 	}
+
+	cout << "\n";
+
+	for(int i = 0; i <= 31; ++i)
+	{
+		printf("%c", ((1 << i) & in) ? '1' : '0');
+	}
 }
 
 const char hex_numbers[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
