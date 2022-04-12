@@ -41,10 +41,15 @@ private:
 	mark_data_node* TAIL;
 
 public:
+
+	char* name;
+	char* group;
+
 	Student()
 	{
 		HEAD = nullptr;
 		TAIL = nullptr;
+		name = group = nullptr;
 	}
 
 	~Student()
@@ -132,9 +137,13 @@ public:
 
 		cout << "\n\nData:\n\n";
 
+		if(name != nullptr && group != nullptr)
+		{
+			cout << "Name: " << name << ", group: " << group << "\n\n";
+		}
+
 		while(cur_node != nullptr)
 		{
-			//cout << "sdfsdf";
 			cout << cur_node->data.subject_name;
 
 			cout <<  ", average mark: ";
@@ -566,9 +575,30 @@ int main()
 
 	stud.add_subject("Programming");
 
-	stud.add_mark("Programming", 6); //here
+	stud.add_mark("Programming", 6);
 	stud.add_mark("Programming", -666);
 	stud.add_mark("M(a/e)th", 66);
+
+	stud.add_subject("Chemistry");
+
+	stud.add_mark("Chemistry", 6);
+	stud.add_mark("Chemistry", 66);
+	stud.add_mark("Chemistry", 26);
+
+	stud.add_subject("PE");
+
+	stud.add_mark("PE", 6);
+	stud.add_mark("PE", 66);
+	stud.add_mark("PE", -126);
+
+	char* name = "Vasya Pupkin";
+	char* group = "RL6-21 (slightly better than L groups, shown during 12.04.2022)";
+
+	stud.name = (char*)malloc(strlen(name));
+	strcpy(stud.name, name);
+
+	stud.group = (char*)malloc(strlen(group));
+	strcpy(stud.group, group);
 
 	stud.print_student_data();
 
