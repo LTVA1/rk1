@@ -54,7 +54,14 @@ public:
 
 	~Student()
 	{
+		mark_data_node* cur_node = HEAD;
 
+		while(cur_node->prev != nullptr)
+		{
+			cur_node = cur_node->next;
+			delete[] cur_node->data.subject_name;
+			delete cur_node;
+		}
 	}
 
 	void add_mark(char* subject_name, int mark)
@@ -212,14 +219,12 @@ char* binary_to_hex(FILE* in) //3rd task
 	char c = 0;
 	int num_length = 0;
 
-	char chars[64];
+	fseek(in, 0, SEEK_END);
+	long fsize = ftell(in);
+	fseek(in, 0, SEEK_SET);
 
-	for(int i = 0; i < 63; ++i)
-	{
-		chars[i] = 0;
-	}
-
-	static char result[16];
+	char* chars = (char*)malloc(sizeof(char) * fsize);
+	static char* result = (char*)malloc(sizeof(char) * (fsize / 4 + 5));
 
 	while(fscanf(in, "%c", &c) != EOF)
 	{
@@ -238,6 +243,10 @@ char* binary_to_hex(FILE* in) //3rd task
 
 		result[i / 4] = hex_numbers[temp];
 	}
+
+	result[fsize / 4 + 1] = '\0';
+
+	free(chars);
 
 	return result;
 }
@@ -388,9 +397,11 @@ int main()
 
 	char* nums = binary_to_hex(in);
 
-	nums[16] = '\0';
+	//nums[16] = '\0';
 
 	cout << nums;
+
+	free(nums);
 
 	fclose(in);
 
